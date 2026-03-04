@@ -1,0 +1,174 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+responsive {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #c402ff;
+}
+header {
+    background: linear-gradient(135deg, #450086 20%, #0066cc 70%);
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+body {
+    background: linear-gradient(180deg, #0d0015 0%, #1a0049 50%, #0a001f 100%);
+    color: #e0d7f5;
+    font-family: sans-serif;
+}
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+}
+main {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+section {
+    margin-bottom: 40px;
+}
+h2 {
+    color: #d18cff;
+    margin-bottom: 10px;
+}
+p {
+    color: #c8b5e0;
+    line-height: 1.6;
+}
+
+.social-icons {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.social-icons img {
+    display: block;
+    /* prende as imagens da page contatos nesse tamanho */
+    width: 80px;
+    height: 80px;
+}
+
+/* container centralizado */
+.image-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.project-image {
+    max-width: 100%;
+    border: 4px solid #ff80ff; /* borda rosa neon */
+    box-shadow: 0 0 20px rgba(255, 128, 255, 0.6); /* sombra cyberpunk */
+}
+
+/* hover no container/imagem do projeto */
+.project-link {
+    display: inline-block;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.project-link:hover .project-image,
+.project-link:focus .project-image {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+    cursor: pointer;
+}
+
+/*certificados em sobre.html */
+.certificates-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.certificate-item {
+    flex: 1;
+    max-width: 300px;
+    display: flex;
+    justify-content: center;
+}
+
+.certificate-image {
+    max-width: 100%;
+    border: 4px solid #ff80ff;
+    box-shadow: 0 0 20px rgba(255, 128, 255, 0.6);
+}
+
+.certificate-link {
+    display: inline-block;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.certificate-link:hover .certificate-image,
+.certificate-link:focus .certificate-image {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+    cursor: pointer;
+}
+
+/* os dois ícones ficam lado a lado*/
+.Contatos .Cont-icons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+/* título linha inteira acima dos ícones */
+.Contatos .titulo_contatos {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.Contatos .titulo_contatos .T_contatos {
+    font-weight: bold;
+    color: #e0d7f5;
+}
+
+/* lista de competências em sobre.html */
+main section li {
+    color: #c8b5e0;
+    line-height: 1.8;
+    margin-bottom: 8px;
+}
+
+/* foto de perfil redondinha com borda e sombra personalizáveiiiiiis */
+.profile-photo {
+    display: block;
+    max-width: 200px;
+    /* deixa redondo */
+    border-radius: 50%;
+    /* usa variáveis para trocar cores */
+    border: 4px solid var(--photo-border-color, #000);
+    box-shadow: 0 0 15px var(--photo-shadow-color, rgba(0,0,0,0.8));
+}
+
+/* valores padrão para as variáveis */
+:root {
+    --photo-border-color: #6200be;
+    --photo-shadow-color: rgba(162, 0, 255, 0.5);
+}
+footer {
+    background: linear-gradient(135deg, #0066cc 20%, #6200be 70%);
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+}
