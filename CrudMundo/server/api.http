@@ -1,0 +1,66 @@
+### 1. Inserir um Continente (CREATE)
+POST http://localhost:3333/continentes
+Content-Type: application/json
+
+{
+  "nome": "América do Sul",
+  "descricao": "Continente com grande diversidade cultural e belezas naturais incríveis."
+}
+
+### 2. Buscar Continentes (READ)
+GET http://localhost:3333/continentes
+
+### 3. Atualizar um Continente (UPDATE)
+PUT http://localhost:3333/continentes/1
+Content-Type: application/json
+
+{
+  "nome": "América do Sul (Atualizado)",
+  "descricao": "Atualizando a descrição para testar o PUT."
+}
+
+### 4. Deletar um Continente (DELETE)
+DELETE http://localhost:3333/continentes/2
+
+### ================= PAÍSES =================
+
+### 1. Inserir um País (CREATE)
+POST http://localhost:3333/paises
+Content-Type: application/json
+
+{
+  "nome": "Brasil",
+  "populacao": 214300000,
+  "idioma_oficial": "Português",
+  "moeda": "Real",
+  "id_continente": 1
+}
+
+### 2. Buscar Países (READ)
+GET http://localhost:3333/paises
+
+
+### ================= CIDADES =================
+
+### 1. Inserir uma Cidade (CREATE)
+POST http://localhost:3333/cidades
+Content-Type: application/json
+
+{
+  "nome": "São José dos Campos",
+  "populacao": 697054,
+  "latitude": -23.1791,
+  "longitude": -45.8872,
+  "id_pais": 1
+}
+
+### 2. Buscar Cidades (READ)
+GET http://localhost:3333/cidades
+
+### ================= INTEGRAÇÕES EXTERNAS =================
+
+### 1. Consultar Clima da Cidade
+GET http://localhost:3333/cidades/1/clima
+
+### 2. Consultar Bandeira e Info do País (REST Countries)
+GET http://localhost:3333/paises/1/info

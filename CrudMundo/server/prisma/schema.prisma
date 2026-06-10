@@ -1,0 +1,42 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Continent {
+  id        Int       @id @default(autoincrement())
+  nome      String    @db.VarChar(100)
+  descricao String    @db.Text
+  countries Country[]
+
+  @@map("continentes")
+}
+
+model Country {
+  id             Int       @id @default(autoincrement())
+  nome           String    @db.VarChar(100)
+  populacao      Int
+  idioma_oficial String    @db.VarChar(100)
+  moeda          String    @db.VarChar(50)
+  id_continente  Int
+  continente     Continent @relation(fields: [id_continente], references: [id], onDelete: Cascade)
+  cities         City[]
+
+  @@map("paises")
+}
+
+model City {
+  id        Int     @id @default(autoincrement())
+  nome      String  @db.VarChar(100)
+  populacao Int
+  latitude  Float
+  longitude Float
+  id_pais   Int
+  pais      Country @relation(fields: [id_pais], references: [id], onDelete: Cascade)
+
+  @@map("cidades")
+}
