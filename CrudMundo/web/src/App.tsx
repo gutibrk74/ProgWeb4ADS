@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Continentes from './pages/continentes';
+import Continentes from './pages/Continentes';
 import Paises from './pages/Paises';
 import Cidades from './pages/Cidades';
 import Login from './pages/Login';

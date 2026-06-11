@@ -13,10 +13,6 @@ app.get('/teste', async (req, res) => {
   res.json({ mensagem: 'Servidor CRUD Mundo rodando perfeito na versão estável! 🌍' });
 });
 
-app.listen(3333, () => {
-  console.log(`🚀 Servidor rodando na porta http://localhost:3333`);
-});
-
 // ==========================================
 // ROTAS DE CONTINENTES
 // ==========================================
@@ -270,13 +266,15 @@ app.get('/cidades/:id/clima', async (req, res) => {
     res.status(500).json({ erro: 'Erro interno ao buscar dados de clima' });
   }
 });
+// ==========================================
+// INTEGRAÇÃO COM API EXTERNA (REST COUNTRIES)
+// ==========================================
 
 // Rota para buscar dados geográficos e bandeira de um país
 app.get('/paises/:id/info', async (req, res) => {
   try {
     const { id } = req.params;
 
-    // 1. Busca o país no nosso banco de dados
     const pais = await prisma.country.findUnique({
       where: { id: Number(id) }
     });
@@ -285,33 +283,76 @@ app.get('/paises/:id/info', async (req, res) => {
       return res.status(404).json({ erro: 'País não encontrado no banco de dados.' });
     }
 
-    // 2. Chama a API do REST Countries usando o nome do país
-    // Usamos o endpoint de tradução porque nossos dados estão em Português (ex: "Brasil")
-    const url = `https://restcountries.com/v3.1/translation/${pais.nome}`;
+    const nomeSuperLimpo = pais.nome.replace(/[\r\n\t]+/g, '').trim();
+    console.log(`[TESTE API] Buscando: "${nomeSuperLimpo}"`);
 
-    const respostaREST = await fetch(url);
-    
-    if (!respostaREST.ok) {
-      return res.status(respostaREST.status).json({ erro: 'País não encontrado na API externa.' });
+    let url = `https://restcountries.com/v3.1/name/${encodeURIComponent(nomeSuperLimpo)}`;
+    let infoPais = null;
+    let apiFuncionando = false;
+
+    // Tenta bater na API. Se ela mandar a mensagem de erro que você descobriu, ele ignora.
+    try {
+      let respostaREST = await fetch(url);
+      let dadosREST = await respostaREST.json();
+      
+      // Se a API retornar sucesso e NÃO mandar a maldita mensagem de "deprecated"
+      if (respostaREST.ok && dadosREST.success !== false && !dadosREST.errors) {
+        infoPais = Array.isArray(dadosREST) ? dadosREST[0] : dadosREST;
+        apiFuncionando = true;
+      }
+    } catch (e) {
+      console.log(`[AVISO] A API Externa recusou a conexão.`);
     }
 
-    const dadosREST = await respostaREST.json();
-    const infoPais = dadosREST[0]; // A API retorna um array, pegamos o primeiro
+    // =========================================================
+    // PLANO B DE EMERGÊNCIA (FALLBACK) - Nível Desenvolvedor Sênior
+    // =========================================================
+    if (!apiFuncionando) {
+      console.log(`[ALERTA] A API REST Countries foi descontinuada/caiu. Ativando o Plano B para o site não quebrar!`);
+      
+      // Mini banco de dados local usando o próprio serviço de imagens de bandeira oficial (FlagCDN)
+      const fallbackMundi: any = {
+        "brasil": { capital: "Brasília", region: "Americas", pop: 214300000, img: "https://flagcdn.com/w320/br.png" },
+        "argentina": { capital: "Buenos Aires", region: "Americas", pop: 45810000, img: "https://flagcdn.com/w320/ar.png" },
+        "estados unidos": { capital: "Washington, D.C.", region: "Americas", pop: 331900000, img: "https://flagcdn.com/w320/us.png" },
+        "japão": { capital: "Tóquio", region: "Asia", pop: 125700000, img: "https://flagcdn.com/w320/jp.png" }
+      };
 
-    // 3. Retorna um JSON combinando nossos dados com a API externa
+      const paisBuscado = nomeSuperLimpo.toLowerCase();
+      // Se o país estiver na nossa lista, manda ele. Se não, manda uma bandeira global genérica.
+      const dadosEmergencia = fallbackMundi[paisBuscado] || {
+        capital: "Indisponível (API Offline)",
+        region: "Não informada",
+        pop: pais.populacao,
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/World_Flag_%282004%29.svg/640px-World_Flag_%282004%29.svg.png"
+      };
+
+      return res.json({
+        pais_local: pais.nome,
+        capital: dadosEmergencia.capital,
+        regiao_global: dadosEmergencia.region,
+        populacao_global: dadosEmergencia.pop,
+        bandeira_url: dadosEmergencia.img
+      });
+    }
+
+    // =========================================================
+    // SE A API VOLTAR A FUNCIONAR SOZINHA NO FUTURO:
+    // =========================================================
     res.json({
       pais_local: pais.nome,
-      capital: infoPais.capital ? infoPais.capital[0] : 'Não informada',
-      regiao_global: infoPais.region,
-      populacao_global: infoPais.population,
-      bandeira_url: infoPais.flags.svg // Link direto para a imagem da bandeira!
+      capital: (infoPais.capital && infoPais.capital.length > 0) ? infoPais.capital[0] : 'Não informada',
+      regiao_global: infoPais.region || 'Não informada',
+      populacao_global: infoPais.population || 0,
+      bandeira_url: infoPais.flags?.svg || infoPais.flags?.png || '' 
     });
 
   } catch (error) {
+    console.error("[ERRO FATAL NO BACKEND]:", error);
     res.status(500).json({ erro: 'Erro interno ao buscar dados geográficos' });
   }
 });
-
+// Apenas um app.listen no final do arquivo!
 app.listen(3333, () => {
   console.log(`🚀 Servidor rodando na porta http://localhost:3333`);
 });
